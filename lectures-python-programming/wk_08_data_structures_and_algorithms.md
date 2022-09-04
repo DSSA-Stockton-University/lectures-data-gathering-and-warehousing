@@ -1,8 +1,10 @@
 # DSSA Data Gathering & Warehousing
-**Instructor**: Carl Chatterton
-**Term**: Fall 2022
-**Module**: 1
-**Week**: 6
+---
+
+**Instructor**: Carl Chatterton <br>
+**Term**: Fall 2022 <br>
+**Module**: 1 <br>
+**Week**: 8
 
 ---
 ## Data Structures and Algorithms: Part 2
