@@ -1,8 +1,10 @@
 # DSSA Data Gathering & Warehousing
-**Instructor**: Carl Chatterton
-**Term**: Fall 2022
-**Module**: 2
-**Week**: 9
+---
+
+**Instructor**: Carl Chatterton <br>
+**Term**: Fall 2022 <br>
+**Module**: 2 <br>
+**Week**: 10
 
 ---
 ![img](/assets/img/birdmeme.jpg)
