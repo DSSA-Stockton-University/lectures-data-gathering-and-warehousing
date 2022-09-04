@@ -3,8 +3,8 @@
 
 **Instructor**: Carl Chatterton <br>
 **Term**: Fall 2022 <br>
-**Module**: 1 <br>
-**Week**: 5
+**Module**: 2 <br>
+**Week**: 6
 
 ---
 
