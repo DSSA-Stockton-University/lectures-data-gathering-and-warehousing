@@ -4,7 +4,7 @@
 **Instructor**: Carl Chatterton <br>
 **Term**: Fall 2022 <br>
 **Module**: 1 <br>
-**Week**: 3
+**Week**: 4
 
 ---
 # Storage and Retrieval
