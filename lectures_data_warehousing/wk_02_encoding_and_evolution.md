@@ -1,12 +1,15 @@
 # DSSA Data Gathering & Warehousing
 ---
 
-**Instructor**: Carl Chatterton <br>
-**Term**: Fall 2022 <br>
-**Module**: 1 <br>
+**Instructor**: Carl Chatterton 
+**Term**: Fall 2022 
+**Module**: 1 
 **Week**: 2
 
 ---
+![img](/assets/img/encoding.jpeg)
+---
+
 ## Encoding and evolution
 
 Change to an application's features also requires a change to data it stores.
