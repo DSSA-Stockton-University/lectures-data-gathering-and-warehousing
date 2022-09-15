@@ -453,13 +453,13 @@ The following is an example that will help you understand how to use `asyncio.fu
 import asyncio
 
 
-async def Myoperation(future):
+async def my_operation(future):
    await asyncio.sleep(2)
    future.set_result('Future Completed')
 
 loop = asyncio.get_event_loop()
 future = asyncio.Future()
-asyncio.ensure_future(Myoperation(future))
+asyncio.ensure_future(my_operation(future))
 
 try:
    loop.run_until_complete(future)
@@ -476,12 +476,12 @@ Example of async def
 ```python
 import asyncio
 
-async def Myoperation():
+async def my_operation():
    print("First Coroutine")
 
 loop = asyncio.get_event_loop()
 try:
-   loop.run_until_complete(Myoperation())
+   loop.run_until_complete(my_operation())
 
 finally:
    loop.close()
