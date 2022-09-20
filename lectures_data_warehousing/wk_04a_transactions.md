@@ -130,7 +130,7 @@ To prevent dirty reads:
 
 Read committed is imperfect, and there are still plenty of ways in which you can have concurrency bugs when using this isolation level.
 
-__Nonrepeatable read or read skew__ occur when you read at the same time you committed a change and you may see inconsistent temporal changes or results.
+__Non-repeatable read or read skew__ occur when you read at the same time you committed a change and you may see inconsistent temporal changes or results.
 
 There are some situations that cannot tolerate such temporal inconsistencies:
 
@@ -161,15 +161,15 @@ __wrapping up__
 
 ---
 
-### __Preventing lost updates__
+#### __Preventing lost updates__
 This might happen if the <u>application code</u> reads some value from the database, modifies it, and writes it back. If two transactions do this concurrently, one of the modifications can be lost (later write clobbers the earlier write). Object-relational-mapping frameworks make it easy to accidentally write code which performs unsafe read-modify-write cycles instead of using atomic operations provided by the database. _Its not a problem if you know what your doing but a place to find subtle gus that are difficult to test for._
 
 ```python
 # example of read-modify-write using python
-db = Database.builder(conn='<my connection string>')
+q = Query.builder(conn='<my connection string>')
 
 # Implements a Builder Pattern for creating a sql query 
-counter = db \
+counter = q \
     .read(tbl='counters') \
     .where(key='foo') \
     .execute()
@@ -180,7 +180,7 @@ counter += 1 # <- This is where the problem happens
 # There is no lock set for this operation. 
 
 # We use the cursor object to update the database
-update_query = db \
+update_query = q \
     .update(tbl='counters') \
     .set(value=counter) \
     .where(key='foo') \
@@ -217,3 +217,88 @@ UPDATE figures SET position = 'c4' WHERE id = 1234;
 COMMIT;
 ```
 
+
+__Automatically detecting lost updates__
+
+Atomic operations and locks are ways to prevent lost updates by forcing the database to perform read-modify-write cycles sequentially. 
+
+An alternative approach would be to allow them to execute in parallel, if the transaction manager detects a lost update, abort the transaction and force it to retry its read-modify-write cycle.
+
+The advantage to this approach is that the database can perform efficient checks for lost updates in conjunction with snapshot isolation. 
+
+
+__Compare-and-set__
+
+In databases that don't provide transactions you sometimes find an atomic compare-and-set operation useful to avoid lost updates. 
+
+Compare-and-set works by allowing an update to happen only if the value has not changed since you last read it, otherwise the update has no effect.
+
+
+__Conflict resolution and replication__
+In replicated databases, preventing lost updates becomes more challenging because copies of the data exist on multiple nodes and the data can be modified concurrently. For this reason locks and compare-and-set do not apply.
+
+Instead, a common approach in replicated databases is to allow concurrent writes to create several conflicting versions of a value (also know as siblings), and to use application code or special data structures to resolve and merge these versions after the fact.
+
+
+__Write skew and phantoms__
+
+So far we have covered two types of race conditions that occur when different transactions try to concurrently write to the same object in a database. 
+
+Imagine Alice and Bob are two on-call doctors for a particular shift. Imagine both doctors request to leave because they are feeling unwell. Unfortunately they happen to click the button to go off call at approximately the same time.
+
+
+```
+ALICE                                   BOB
+
+┌─ BEGIN TRANSACTION                    ┌─ BEGIN TRANSACTION
+│                                       │
+├─ currently_on_call = (                ├─ currently_on_call = (
+│   select count(*) from doctors        │    select count(*) from doctors
+│   where on_call = true                │    where on_call = true
+│   and shift_id = 1234                 │    and shift_id = 1234
+│  )                                    │  )
+│  // now currently_on_call = 2         │  // now currently_on_call = 2
+│                                       │
+├─ if (currently_on_call  2) {          │
+│    update doctors                     │
+│    set on_call = false                │
+│    where name = 'Alice'               │
+│    and shift_id = 1234                ├─ if (currently_on_call >= 2) {
+│  }                                    │    update doctors
+│                                       │    set on_call = false
+└─ COMMIT TRANSACTION                   │    where name = 'Bob'  
+                                        │    and shift_id = 1234
+                                        │  }
+                                        │
+                                        └─ COMMIT TRANSACTION
+```
+Since database is using snapshot isolation, both checks return 2. Both transactions commit, and now no doctor is on call. The requirement of having at least one doctor has been violated.
+
+Write skew can occur if two transactions read the same objects, and then update some of those objects. You get a dirty write or lost update anomaly.
+
+Ways to prevent write skew are a bit more restricted:
+
+Atomic operations don't help as things involve more objects.
+Automatically prevent write skew requires true serializable isolation.
+The second-best option in this case is probably to explicitly lock the rows that the transaction depends on.
+
+```sql
+BEGIN TRANSACTION;
+
+SELECT * FROM doctors
+WHERE on_call = true
+AND shift_id = 1234 FOR UPDATE;
+
+UPDATE doctors
+SET on_call = false
+WHERE name = 'Alice'
+AND shift_id = 1234;
+
+COMMIT;
+```
+
+### __Serializability__
+
+#### __Actual serial execution__
+#### __Two-Phase locking__
+#### __Serializable snapshot isolation__
