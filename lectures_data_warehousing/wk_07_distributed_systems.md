@@ -4,7 +4,7 @@
 **Instructor**: Carl Chatterton 
 **Term**: Fall 2022 
 **Module**: 1 
-**Week**: 4
+**Week**: 7
 
 ---
 
@@ -16,7 +16,7 @@ The trouble with distributed systems
 Faults and partial failures
 A program on a single computer either works or it doesn't. There is no reason why software should be flaky (non deterministic).
 
-In a distributed systems we have no choice but to confront the messy reality of the physical world. There will be parts that are broken in an unpredictable way, while others work. Partial failures are nondeterministic. Things will unpredicably fail.
+In a distributed systems we have no choice but to confront the messy reality of the physical world. There will be parts that are broken in an unpredictable way, while others work. Partial failures are nondeterministic. Things will unpredictably fail.
 
 We need to accept the possibility of partial failure and build fault-tolerant mechanism into the software. We need to build a reliable system from unreliable components.
 
@@ -28,7 +28,7 @@ The internet and most internal networks are asynchronous packet networks. A mess
 Request lost
 Request waiting in a queue to be delivered later
 Remote node may have failed
-Remote node may have temporarily stoped responding
+Remote node may have temporarily stopped responding
 Response has been lost on the network
 The response has been delayed and will be delivered later
 If you send a request to another node and don't receive a response, it is impossible to tell why.
@@ -57,19 +57,19 @@ You can choose timeouts experimentally by measuring the distribution of network 
 
 Systems can continually measure response times and their variability (jitter), and automatically adjust timeouts according to the observed response time distribution.
 
-Synchronous vs ashynchronous networks
-A telephone network estabilishes a circuit, we say is synchronous even as the data passes through several routers as it does not suffer from queing. The maximum end-to-end latency of the network is fixed (bounded delay).
+Synchronous vs asynchronous networks
+A telephone network establishes a circuit, we say is synchronous even as the data passes through several routers as it does not suffer from queuing. The maximum end-to-end latency of the network is fixed (bounded delay).
 
 A circuit is a fixed amount of reserved bandwidth which nobody else can use while the circuit is established, whereas packets of a TCP connection opportunistically use whatever network bandwidth is available.
 
-Using circuits for bursty data transfers wastes network capacity and makes transfer unnecessary slow. By contrast, TCP dinamycally adapts the rate of data transfer to the available network capacity.
+Using circuits for bursty data transfers wastes network capacity and makes transfer unnecessary slow. By contrast, TCP dynamically adapts the rate of data transfer to the available network capacity.
 
 We have to assume that network congestion, queueing, and unbounded delays will happen. Consequently, there's no "correct" value for timeouts, they need to be determined experimentally.
 
 Unreliable clocks
 The time when a message is received is always later than the time when it is sent, we don't know how much later due to network delays. This makes difficult to determine the order of which things happened when multiple machines are involved.
 
-Each machine on the network has its own clock, slightly faster or slower than the other machines. It is possible to synchronise clocks with Network Time Protocol (NTP).
+Each machine on the network has its own clock, slightly faster or slower than the other machines. It is possible to sycnchronize clocks with Network Time Protocol (NTP).
 
 Time-of-day clocks. Return the current date and time according to some calendar (wall-clock time). If the local clock is toof ar ahead of the NTP server, it may be forcibly reset and appear to jump back to a previous point in time. This makes it is unsuitable for measuring elapsed time.
 Monotonic clocks. Peg: System.nanoTime(). They are guaranteed to always move forward. The difference between clock reads can tell you how much time elapsed beween two checks. The absolute value of the clock is meaningless. NTP allows the clock rate to be speeded up or slowed down by up to 0.05%, but NTP cannot cause the monotonic clock to jump forward or backward. In a distributed system, using a monotonic clock for measuring elapsed time (peg: timeouts), is usually fine.
