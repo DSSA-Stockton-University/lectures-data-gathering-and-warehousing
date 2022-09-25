@@ -4,7 +4,7 @@
 **Instructor**: Carl Chatterton 
 **Term**: Fall 2022 
 **Module**: 1 
-**Week**: 8
+**Week**: 7
 
 ---
 ![img](/assets/img/fault-tolerance.jpg)
