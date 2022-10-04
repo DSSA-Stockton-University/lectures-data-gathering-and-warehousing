@@ -13,7 +13,9 @@
 
 # Storage and Retrieval
 
-Databases need to do two things: Store the data and give the data back to you.
+Databases need to do two things: 
+1. How to store the data 
+2. How to give the data back to you.
 
 ### Data structures that power up your database
 
@@ -53,7 +55,7 @@ Some issues that are important in a real implementation:
 * **File format** - It is simpler to use `binary` format.
 * **Deleting records** - Append special deletion record to the data file (_tombstone_) that tells the merging process to discard previous values.
 * **Crash recovery** - If restarted, the in-memory hash maps are lost. You can recover from reading each segment but that would take long time. You can speed up recovery by storing a snapshot of each segment hash map on disk.
-* **Partially written records** - The database may crash at any time. A `checksums` allowing corrupted parts of the log to be detected and ignored.
+* **Partially written records** - The database may crash at any time. A `checksum` allowing corrupted parts of the log to be detected and ignored.
 * **Concurrency control** - As writes are appended to the log in a strictly sequential order, a common implementation is to have a single writer thread. Segments are immutable, so they can be read concurrently by multiple threads.
 
  Append-only design turns out to be good for several reasons:
